@@ -1,0 +1,10 @@
+version: '2'
+services:
+    rabbitmq-sisgcorp:
+        #image: rabbitmq:3.6.5-management
+        build: .
+        #volumes:
+         #   - ./etc/rabbitmq:/etc/rabbitmq
+        ports:
+        - 15672:15672
+        - 5672:5672

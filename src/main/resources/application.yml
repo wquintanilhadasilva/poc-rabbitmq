@@ -1,0 +1,13 @@
+
+server:
+  port: 8081
+
+spring:
+  rabbitmq:
+    listener:
+      simple:
+        retry:
+          enabled: 'true'
+          max-attempts: '3'
+          initial-interval: 10s
+        acknowledge-mode: 'auto'

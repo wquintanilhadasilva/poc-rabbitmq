@@ -1,0 +1,190 @@
+{
+  "rabbit_version": "3.10.7",
+  "rabbitmq_version": "3.10.7",
+  "product_name": "RabbitMQ",
+  "product_version": "3.10.7",
+  "users": [
+    {
+      "name": "admin",
+      "password_hash": "b/XedHeZ8AVWttrmlrs5Mjl+eKI=",
+      "hashing_algorithm": "rabbit_password_hashing_md5",
+      "tags": [
+        "administrator"
+      ],
+      "limits": {}
+    },
+    {
+      "name": "guest",
+      "password_hash": "qpssUAHvV4aO/+74HcMo3S3cQ+9UUbiBv7qfcPLpnIrCma2h",
+      "hashing_algorithm": "rabbit_password_hashing_sha256",
+      "tags": [
+        "administrator"
+      ],
+      "limits": {}
+    }
+  ],
+  "vhosts": [
+    {
+      "name": "om"
+    },
+    {
+      "name": "/"
+    }
+  ],
+  "permissions": [
+    {
+      "user": "admin",
+      "vhost": "/",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    },
+    {
+      "user": "guest",
+      "vhost": "/",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    },
+    {
+      "user": "admin",
+      "vhost": "om",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    },
+    {
+      "user": "guest",
+      "vhost": "om",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    }
+  ],
+  "topic_permissions": [],
+  "parameters": [],
+  "global_parameters": [
+    {
+      "name": "internal_cluster_id",
+      "value": "rabbitmq-cluster-id-QjJ8nADh9yc8UyIG1cQ_9w"
+    }
+  ],
+  "policies": [],
+  "queues": [
+    {
+      "name": "dlq.mensagem",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-dead-letter-exchange": "exc.processamento.dlq",
+        "x-dead-letter-routing-key": "dlqreproc.#",
+        "x-message-ttl": 60000,
+        "x-queue-type": "classic"
+      }
+    },
+    {
+      "name": "dlq.exclusaoManual",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-queue-type": "classic"
+      }
+    },
+    {
+      "name": "q.mensagem",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-dead-letter-exchange": "exc.mensagem.dlq",
+        "x-dead-letter-routing-key": "dlqmensagem.#",
+        "x-queue-type": "classic"
+      }
+    },
+    {
+      "name": "dlq.reprocessamento",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-dead-letter-exchange": "exc.exclusao.dlq",
+        "x-dead-letter-routing-key": "dlqdel.#",
+        "x-queue-type": "classic"
+      }
+    }
+  ],
+  "exchanges": [
+    {
+      "name": "exc.mensagem",
+      "vhost": "/",
+      "type": "topic",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    },
+    {
+      "name": "exc.exclusao.dlq",
+      "vhost": "/",
+      "type": "topic",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    },
+    {
+      "name": "exc.processamento.dlq",
+      "vhost": "/",
+      "type": "topic",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    },
+    {
+      "name": "exc.mensagem.dlq",
+      "vhost": "/",
+      "type": "topic",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    }
+  ],
+  "bindings": [
+    {
+      "source": "exc.exclusao.dlq",
+      "vhost": "/",
+      "destination": "dlq.exclusaoManual",
+      "destination_type": "queue",
+      "routing_key": "dlqdel.#",
+      "arguments": {}
+    },
+    {
+      "source": "exc.mensagem",
+      "vhost": "/",
+      "destination": "q.mensagem",
+      "destination_type": "queue",
+      "routing_key": "mensagem.#",
+      "arguments": {}
+    },
+    {
+      "source": "exc.mensagem.dlq",
+      "vhost": "/",
+      "destination": "dlq.mensagem",
+      "destination_type": "queue",
+      "routing_key": "dlqmensagem.#",
+      "arguments": {}
+    },
+    {
+      "source": "exc.processamento.dlq",
+      "vhost": "/",
+      "destination": "dlq.reprocessamento",
+      "destination_type": "queue",
+      "routing_key": "dlqreproc.#",
+      "arguments": {}
+    }
+  ]
+}
